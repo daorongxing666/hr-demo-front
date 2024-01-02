@@ -4,9 +4,9 @@
     <div class="form">
       <h1>登录</h1>
       <el-card shadow="never" class="login-card">
-        <el-form :model="loginForm" :rules="loginRule">
-          <el-form-item prop="mobilePhone">
-            <el-input v-model="loginForm.mobilePhone" placeholder="请输入用户名" />
+        <el-form ref="form" :model="loginForm" :rules="loginRule">
+          <el-form-item prop="mobile">
+            <el-input v-model="loginForm.mobile" placeholder="请输入用户名" />
           </el-form-item>
           <el-form-item prop="password">
             <el-input v-model="loginForm.password" show-password placeholder="请输入密码" />
@@ -15,7 +15,7 @@
             <el-checkbox v-model="loginForm.isAgree">点击勾选用户协议</el-checkbox>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" style="width:350px">登录</el-button>
+            <el-button type="primary" style="width:350px" @click="login">登录</el-button>
           </el-form-item>
         </el-form>
       </el-card>
@@ -28,9 +28,9 @@ export default {
   data() {
     return {
       loginForm: {
-        mobilePhone: '',
-        password: '',
-        isAgree: ''
+        mobile: process.env.NODE_ENV === 'development' ? '13800000002' : '',
+        password: process.env.NODE_ENV === 'development' ? 'hm#qd@23!' : '',
+        isAgree: process.env.NODE_ENV === 'development'
       },
       loginRule: {
         mobilePhone: [
@@ -66,6 +66,14 @@ export default {
           }
         ]
       }
+    }
+  },
+  methods: {
+    login() {
+      this.$refs.form.validate(async(isOK) => {
+        await this.$store.dispatch('user/login', this.loginForm)
+        this.$router.push('/')
+      })
     }
   }
 }
